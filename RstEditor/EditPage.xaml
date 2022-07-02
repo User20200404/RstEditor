@@ -1,0 +1,26 @@
+﻿<Page
+    x:Class="RstEditor.EditPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RstEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="thisPage"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d" Loaded="thisPage_Loaded">
+
+    <Grid>
+        <StackPanel
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Orientation="Vertical">
+            <TextBlock Text="键(Key)" />
+            <TextBox x:Name="textBox_Key" Text="{Binding ElementName=thisPage, Path=Key, Mode=TwoWay}" />
+            <TextBlock />
+            <TextBlock Text="值(Value)" />
+            <TextBox
+                x:Name="textBox_Value"
+                Text="{Binding ElementName=thisPage, Path=Value, Mode=TwoWay}" />
+        </StackPanel>
+    </Grid>
+</Page>

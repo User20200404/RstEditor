@@ -1,0 +1,67 @@
+﻿<Page
+    x:Class="RstEditor.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RstEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Page.BottomAppBar>
+        <CommandBar
+            x:Name="bottomCommandBar"
+            Background="{ThemeResource AppBarBackgroundThemeBrush}"
+            DefaultLabelPosition="Bottom"
+            IsOpen="True"
+            IsSticky="True"
+            OverflowButtonVisibility="Visible">
+            <AppBarButton
+                x:Name="barButton_Open"
+                Width="85"
+                Icon="OpenFile"
+                Label="打开RST文件"
+                Tapped="barButton_Open_Tapped" />
+            <AppBarButton
+                x:Name="barButton_Save"
+                Icon="Save"
+                Label="保存文件"
+                Tapped="barButton_Save_Tapped" />
+            <AppBarButton
+                x:Name="barButton_SaveAs"
+                Icon="Paste"
+                Label="另存为" 
+                Tapped="barButton_SaveAs_Tapped"/>
+            <AppBarButton
+                x:Name="barButton_Close"
+                Icon="Clear"
+                Label="关闭文件"
+                Tapped="barButton_Close_Tapped" />
+            <AppBarSeparator/>
+            <AppBarButton
+                x:Name="barButton_Replace"
+                Icon="Sort"
+                Label="快速替换"
+                Tapped="barButton_Replace_Tapped"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+    <NavigationView
+        x:Name="topNavigationView"
+        IsBackButtonVisible="Collapsed"
+        ItemInvoked="topNavigationView_ItemInvoked"
+        PaneDisplayMode="Top"
+        SelectionChanged="topNavigationView_SelectionChanged"
+        SelectionFollowsFocus="Enabled">
+        <NavigationView.MenuItems>
+            <NavigationViewItem
+                x:Name="nav_StartPage"
+                Content="起始"
+                Tag="StartPage" />
+            <NavigationViewItemSeparator />
+        </NavigationView.MenuItems>
+        <Frame
+            x:Name="contentFrame"
+            CacheSize="64"
+            IsNavigationStackEnabled="False" />
+    </NavigationView>
+
+</Page>
