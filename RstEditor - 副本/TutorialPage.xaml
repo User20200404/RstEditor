@@ -1,0 +1,69 @@
+﻿<Page
+    x:Class="RstEditor.TutorialPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RstEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    NavigationCacheMode="Disabled"
+    mc:Ignorable="d">
+    <Grid>
+        <FlipView
+            x:Name="Gallery"
+            MaxWidth="1920"
+            MaxHeight="1080">
+            <FlipView.ItemTemplate>
+                <DataTemplate x:DataType="local:MyFlipViewItem">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Grid.Row="0"
+                            VerticalAlignment="Center"
+                            Source="{x:Bind Image}"
+                            Stretch="Uniform" />
+                        <TextBlock
+                            Grid.Row="1"
+                            MaxWidth="1200"
+                            Padding="12,12"
+                            HorizontalAlignment="Center"
+                            Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="{x:Bind Text}" />
+                    </Grid>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+            <local:MyFlipViewItem Image="Assets/LOLUI.png" Text="英雄联盟的RST文件定义了游戏中需要显示的各种描述文本，包括但不限于UI文本、英雄称号、战斗文本、状态文本、技能描述文本、装备描述文本。如图显示了游戏内常见的文本形式。" />
+            <local:MyFlipViewItem Image="Assets/RSTFileDir.png" Text="图示目录中以“.wad.client”为后缀的文件封装了本程序所支持的RST文件。" />
+            <local:MyFlipViewItem Image="Assets/Obsidian_Browse.png" Text="可以使用一款名为“Obsidian”的解包工具来对wad.client文件进行解析，下载见https://github.com/Crauzer/Obsidian/releases/download/4.3.2/Obsidian_4.3.2_Portable_x64.zip" />
+            <local:MyFlipViewItem Image="Assets/Obsidian_Extract.png" Text="打开wad.client文件后，选中文件，在菜单中进行导出。" />
+            <local:MyFlipViewItem Image="Assets/RSTFile_Export.png" Text="在data\menu目录中得到的“fontconfig_xx_xx.txt”就是本编辑器所支持的RST文件。" />
+            <local:MyFlipViewItem Image="Assets/RSTFile_Edit&amp;Save.png" Text="参考如图所示操作。" />
+            <local:MyFlipViewItem Image="Assets/CreateWad.png" Text="参考如图所示操作。" />
+            <local:MyFlipViewItem Image="Assets/SaveWad.png" Text="参考如图所示操作。" />
+            <local:MyFlipViewItem Image="Assets/ReplaceWad.png" Text="参考如图所示操作。" />
+            <local:MyFlipViewItem Image="Assets/GZSkin.png" Text="使用格子挂载器来屏蔽游戏内文件验证模块。" />
+            <local:MyFlipViewItem Image="Assets/Game.png" Text="如图英雄称号已被成功更改。" />
+            <FlipViewItem>
+                <StackPanel
+                    VerticalAlignment="Center"
+                    Orientation="Vertical"
+                    Spacing="25">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="40"
+                        Text="恭喜您已完成所有教学步骤！" />
+                    <Button
+                        x:Name="button_Return"
+                        HorizontalAlignment="Center"
+                        Background="DeepSkyBlue"
+                        Content="开始使用RstEditor！" 
+                        Tapped="button_Return_Tapped"/>
+                </StackPanel>
+            </FlipViewItem>
+        </FlipView>
+    </Grid>
+</Page>

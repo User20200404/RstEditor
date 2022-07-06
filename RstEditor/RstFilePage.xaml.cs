@@ -56,11 +56,15 @@ namespace RstEditor
             rstFileModel.RstFileItems.CollectionChanged += RstFileItems_CollectionChanged;
             base.OnNavigatedTo(e);
         }
+
+
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             rstFileModel.RstFileItems.CollectionChanged -= RstFileItems_CollectionChanged;
             base.OnNavigatedFrom(e);
         }
+
+
         private void RstFileItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //将更改应用到RSTFile的实例 rstFile中去。
@@ -75,8 +79,8 @@ namespace RstEditor
                     //rstFileModel.RstFileItems[index].ItemValue = currentNewItem.ItemValue;
                     //rstFileModel.RstFileItems[index].ItemKey = currentNewItem.ItemKey;
 
-                    ulong currentNewItemKey = ulong.Parse(currentNewItem.ItemKey);
-                    rstFile.Entries.Remove(ulong.Parse((currentOldItem.ItemKey)));
+                    ulong currentNewItemKey = ulong.Parse(currentNewItem.ItemKey,System.Globalization.NumberStyles.HexNumber);
+                    rstFile.Entries.Remove(ulong.Parse(currentOldItem.ItemKey,System.Globalization.NumberStyles.HexNumber));
                     rstFile.Entries.Add(currentNewItemKey, currentNewItem.ItemValue);
                 }
             }

@@ -1,0 +1,28 @@
+﻿<Page
+    x:Class="RstEditor.ReplacePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RstEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="thisPage"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <TextBlock x:Name="textBlock_Source" Text="原始文本 - 找到 0 个项目中的 0 个" />
+            <TextBox x:Name="textBox_Source" Text="{Binding ElementName=thisPage, Path=OriginalText, Mode=TwoWay}" />
+            <TextBlock />
+            <TextBlock Text="替换为 " />
+            <TextBox x:Name="textBox_ReplaceWith" Text="{Binding ElementName=thisPage, Path=ReplaceWith, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal">
+                <ProgressRing
+                    x:Name="progressRing"
+                    VerticalAlignment="Bottom"
+                    IsActive="False" />
+                <TextBlock x:Name="textBlock_Progress" VerticalAlignment="Bottom" Text="{Binding ElementName=thisPage, Path=Progress}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

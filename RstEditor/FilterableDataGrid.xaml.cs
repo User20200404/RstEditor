@@ -25,8 +25,11 @@ namespace RstEditor
 {
     public sealed partial class FilterableDataGrid : UserControl
     {
+        private bool initializing;
+
         public FilterableDataGrid()
         {
+
             this.InitializeComponent();
             var warningSuppression = this.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () => this.InitializecolumnListForSelectedItemSelection());
         }
@@ -44,12 +47,14 @@ namespace RstEditor
         /// <param name="e"></param>
         private void InitializecolumnListForSelectedItemSelection()
         {
+            initializing = true;
             if (columnListForSelectedItem.Items.Count > 0)
             {
                 RstFileInfo info = Tag as RstFileInfo;
                 columnListForSelectedItem.SelectedIndex = info.FilterComboSelectedIndex;
                 FilterText.Text = info.FilterText;
             }
+            initializing = false;
         }
 
         /// <summary>
@@ -57,9 +62,12 @@ namespace RstEditor
         /// </summary>
         private void UpdateRstInfo()
         {
-            RstFileInfo info = Tag as RstFileInfo;
-            info.FilterComboSelectedIndex = columnListForSelectedItem.SelectedIndex;
-            info.FilterText = FilterText.Text;
+            if (!initializing)
+            {
+                RstFileInfo info = Tag as RstFileInfo;
+                info.FilterComboSelectedIndex = columnListForSelectedItem.SelectedIndex;
+                info.FilterText = FilterText.Text;
+            }
         }
 
         private void columnListForSelectedItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -128,6 +136,8 @@ namespace RstEditor
                         return model.ItemKey.Contains(this.matchString, StringComparison.OrdinalIgnoreCase);
                     case "ItemValue":
                         return model.ItemValue.Contains(this.matchString, StringComparison.OrdinalIgnoreCase);
+                    case "ItemName":
+                        return model.ItemName.Contains(this.matchString, StringComparison.OrdinalIgnoreCase);
                     default:
                         break;
                 }
@@ -176,7 +186,7 @@ namespace RstEditor
 
             };
             ContentDialogResult result = await contentDialog.ShowAsync();
-            if(result == ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
             {
                 var rstFileItems = (DataContext as ObservableCollection<RstFileModel.RstFileItem>);
                 int index = rstFileItems.IndexOf(rstFileItem);
@@ -184,25 +194,8 @@ namespace RstEditor
                 string value = (contentDialog.Content as EditPage).Value;
                 rstFileItems[index] = new RstFileModel.RstFileItem(key, value);
             }
+
         }
-        /*
-private class CustomCellTapCommand:DataGridCommand
-{
-public CustomCellTapCommand()
-{
-this.Id = CommandId.CellTap;
-}
-public override bool CanExecute(object parameter)
-{
-DataGridCellInfo context = parameter as DataGridCellInfo;
-return true;
-}
-public override void Execute(object parameter)
-{
-base.Execute(parameter);
-}
-}
-*/
 
     }
 }

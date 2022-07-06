@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Noisrev.League.IO.RST;
+using Noisrev.Rion;
 namespace RstEditor
 {
     public class RstFileModel : INotifyPropertyChanged
@@ -57,7 +58,7 @@ namespace RstEditor
                 for (int i = 0; i < rstFile.Entries.Count; i++)
                 {
                     enumerator.MoveNext();
-                    this.RstFileItems.Add(new RstFileModel.RstFileItem(enumerator.Current.Key.ToString(), enumerator.Current.Value));
+                    this.RstFileItems.Add(new RstFileModel.RstFileItem(enumerator.Current.Key.ToString("x"), enumerator.Current.Value));
                 }
             }
         }
@@ -70,7 +71,11 @@ namespace RstEditor
             FillRstFileItems();
         }
 
-
+        /// <summary>
+        /// 在<see cref="RstFileItems"/>的项改变时通知其值发生变化。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RstFileItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged("RstFileItems");
@@ -94,12 +99,13 @@ namespace RstEditor
         {
             public string ItemKey { get; set; }
             public string ItemValue { get; set; }
+            public string ItemName { get; set; }
             public RstFileItem(string itemKey, string itemValue)
             {
                 ItemKey = itemKey;
                 ItemValue = itemValue;
+                ItemName = RSTConvert.GetRSTItemName(ulong.Parse(itemKey,System.Globalization.NumberStyles.HexNumber));
             }
-
         }
     }
 }

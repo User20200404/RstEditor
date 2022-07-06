@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="RstEditor.RstFilePropertyPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:RstEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <local:RstFilePropertyModel x:Key="model" x:Name="propertyModel" />
+    </Page.Resources>
+    <Grid>
+        <StackPanel
+            Margin="0,0,0,0"
+            Orientation="Vertical"
+            Spacing="7">
+            <StackPanel.Resources>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Margin" Value="25,0,0,0" />
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Width" Value="125" />
+                    <Setter Property="IsReadOnly" Value="True" />
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock
+                FontSize="17"
+                Text="本页面显示了此RST文件所具有的属性，请注意某些属性在特定RST文件版本下并不可用。"
+                TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    Text="RST文件版本：" />
+                <TextBox Text="{Binding Source={StaticResource model}, Path=Version}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    Text="数  据  偏  移：" />
+                <TextBox Text="{Binding Source={StaticResource model}, Path=DataOffset}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    Text="模             式：" />
+                <TextBox Text="{Binding Source={StaticResource model}, Path=Mode}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    Text="类             型：" />
+                <TextBox Text="{Binding Source={StaticResource model}, Path=Type}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="15"
+                    Text="配  置  文  件：" />
+                <TextBox
+                    Text="{Binding Source={StaticResource model}, Path=Config}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

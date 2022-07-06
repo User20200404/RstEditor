@@ -12,10 +12,20 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <TextBlock x:Name="textBlock_Source" Text="原始文本 - 找到 0 个项目中的 0 个" />
-            <TextBox Text="{Binding ElementName=thisPage, Path=OriginalText, Mode=TwoWay}" />
+            <TextBox x:Name="textBox_Source" Text="{Binding ElementName=thisPage, Path=OriginalText, Mode=TwoWay}" />
             <TextBlock />
-            <TextBlock Text="替换为" />
-            <TextBox Text="{Binding ElementName=thisPage, Path=ReplaceWith, Mode=TwoWay}" />
+            <TextBlock Text="替换为 " />
+            <TextBox x:Name="textBox_ReplaceWith" Text="{Binding ElementName=thisPage, Path=ReplaceWith, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal">
+                <ProgressRing
+                    x:Name="progressRing"
+                    VerticalAlignment="Bottom"
+                    IsActive="False" />
+                <TextBlock
+                    x:Name="textBlock_Progress"
+                    VerticalAlignment="Bottom"
+                    Text="{Binding ElementName=thisPage, Path=Progress, Mode=OneWay}" />
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

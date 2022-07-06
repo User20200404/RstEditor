@@ -15,7 +15,7 @@
 
   <Properties>
     <DisplayName>RstEditor</DisplayName>
-    <PublisherDisplayName>L丶E</PublisherDisplayName>
+    <PublisherDisplayName>Lllya丶Einzbern</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -37,7 +37,7 @@
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="RstEditor是一款对英雄联盟（League of Legends）游戏内文本进行查看、编辑的小工具，目前正处于测试阶段。"
         BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png">
         </uap:DefaultTile >
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
         <uap:InitialRotationPreference>

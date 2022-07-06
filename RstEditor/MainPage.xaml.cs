@@ -21,6 +21,8 @@ using Windows.UI;
 using Windows.UI.Xaml.Media.Animation;
 using System.Collections;
 using Windows.UI.Popups;
+using System.Text.Json;
+using System.Text.Encodings.Web;
 // https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x804 上介绍了“空白页”项模板
 
 namespace RstEditor
@@ -89,16 +91,6 @@ namespace RstEditor
         }
 
         /// <summary>
-        /// 格式化RST文件数据。
-        /// </summary>
-        /// <param name="dataSource">byte[]形式的RST文件数据。</param>
-        /// <returns>对RST数据操作类的实例。</returns>
-        private Task<RSTFile> FormatRstData(byte[] dataSource)
-        {
-            return Task.Run(() => { return new RSTFile(dataSource); });
-        }
-
-        /// <summary>
         /// 为已读取的RST文件数据分配RstFilePage页面。
         /// </summary>
         private void AllocRstPageForRstData(StorageFile file, byte[] dataSource)
@@ -106,7 +98,7 @@ namespace RstEditor
             NavigationViewItem navigationViewItem = new NavigationViewItem()
             {
                 Content = file.Name,
-                Tag = new RstFileInfo() { DataSource = dataSource, StorageFile = file, FilterComboSelectedIndex = 1, FilterText = "" }
+                Tag = new RstFileInfo() { DataSource = dataSource, StorageFile = file, FilterComboSelectedIndex = 2, FilterText = "" }
             };
 
             topNavigationView.MenuItems.Add(navigationViewItem);
@@ -114,13 +106,43 @@ namespace RstEditor
             topNavigationView.SelectedItem = navigationViewItem;
         }
 
+        /// <summary>
+        /// 通过<see cref="StorageFile"/>实例寻找已打开的RST文件。
+        /// </summary>
+        /// <param name="storageFile">已打开的RST文件的<see cref="StorageFile"/>实例。</param>
+        /// <returns>找到返回该已打开文件在<see cref="topNavigationView"/>的<see cref="NavigationView.MenuItems"/>中的索引。未找到返回-1。</returns>
+        private int FindOpenedFile(StorageFile storageFile)
+        {
+            var items = topNavigationView.MenuItems;
+            for(int i = 0;i<items.Count;i++)
+            {
+                RstFileInfo info = (items[i] as NavigationViewItem)?.Tag as RstFileInfo;
+                if (info!= null && storageFile!= null)
+                {
+                    if (storageFile.Path == info.StorageFile.Path)
+                        return i;
+               }
+            }
+            return -1;
+        }
+
         public async void barButton_Open_Tapped(object sender, TappedRoutedEventArgs e)
         {
             StorageFile storageFile = await OpenRstFile();
-            byte[] rstData = await ReadRstFile(storageFile);
-            if (rstData != null)
+            int index = FindOpenedFile(storageFile);
+            if (index == -1)
             {
-                AllocRstPageForRstData(storageFile, rstData);
+                byte[] rstData = await ReadRstFile(storageFile);
+                if (rstData != null)
+                {
+                    AllocRstPageForRstData(storageFile, rstData);
+                }
+            }
+            else
+            {
+                NavigationViewItem item = topNavigationView.MenuItems[index] as NavigationViewItem;
+                contentFrame.Navigate(typeof(RstFilePage), item.Tag, new SlideNavigationTransitionInfo() { Effect = (uint)topNavigationView.MenuItems.IndexOf(item) > (uint)topNavigationView.MenuItems.IndexOf(nav_LastSelectedItem) ? SlideNavigationTransitionEffect.FromRight : SlideNavigationTransitionEffect.FromLeft });
+                topNavigationView.SelectedItem = item;
             }
         }
 
@@ -189,17 +211,57 @@ namespace RstEditor
         {
             if (IsSelectedItemARstFilePage())
             {
-                RstFileInfo info = (topNavigationView.SelectedItem as NavigationViewItem).Tag as RstFileInfo;
-                FileSavePicker picker = new FileSavePicker();
-                picker.DefaultFileExtension = ".txt";
-                picker.FileTypeChoices.Add("RSTFile", new List<string> { ".txt" });
-                StorageFile storageFile = await picker.PickSaveFileAsync();
+                MenuFlyout flyout = new MenuFlyout();
+                MenuFlyoutItem item_rst = new MenuFlyoutItem() { Text = "另存为RST文件" };
+                MenuFlyoutItem item_json = new MenuFlyoutItem() { Text = "格式化为JSON文件" };
+                item_rst.Click += Item_rst_Click;
+                item_json.Click += Item_json_Click;
+                flyout.Items.Add(item_rst);
+                flyout.Items.Add(item_json);
+                flyout.ShowAt(barButton_SaveAs);
+            }
+        }
 
-                if (storageFile != null)
-                {
-                    Stream stream = await storageFile.OpenStreamForWriteAsync();
-                    new RSTFile(info.DataSource).Write(stream, false);
-                }
+        private async Task<StorageFile> ShowSaveAsDialogAndPick(SupportedFileType type)
+        {
+            FileSavePicker picker = new FileSavePicker();
+            switch(type)
+            {
+                case SupportedFileType.JSON:
+                    picker.DefaultFileExtension =".json" ;
+                    picker.FileTypeChoices.Add( "JSON文件", new List<string> {".json"});
+                    break;
+                case SupportedFileType.RST:
+                    picker.DefaultFileExtension = ".txt";
+                    picker.FileTypeChoices.Add("英雄联盟RST文件", new List<string> { ".txt" });
+                    break;
+                default: break;
+            }
+            return await picker.PickSaveFileAsync();
+        }
+
+        private async void Item_json_Click(object sender, RoutedEventArgs e)
+        {
+            StorageFile storageFile = await ShowSaveAsDialogAndPick(SupportedFileType.JSON);
+            if (storageFile != null)
+            {
+                Stream stream = await storageFile.OpenStreamForWriteAsync();
+                RstFileInfo info = (topNavigationView.SelectedItem as NavigationViewItem).Tag as RstFileInfo;
+                var json = Noisrev.Rion.RSTConvert.RstToJson(new RSTFile(info.DataSource));
+                Utf8JsonWriter writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = true , Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+                json.WriteTo(writer);
+                writer.Flush();
+            }
+        }
+
+        private async void Item_rst_Click(object sender, RoutedEventArgs e)
+        {
+            StorageFile storageFile = await ShowSaveAsDialogAndPick(SupportedFileType.RST);
+            if (storageFile != null)
+            {
+                Stream stream = await storageFile.OpenStreamForWriteAsync();
+                RstFileInfo info = (topNavigationView.SelectedItem as NavigationViewItem).Tag as RstFileInfo;
+                new RSTFile(info.DataSource).Write(stream, false);
             }
         }
 
@@ -210,53 +272,36 @@ namespace RstEditor
                 RstFileInfo info = (topNavigationView.SelectedItem as NavigationViewItem).Tag as RstFileInfo;
                 ContentDialog contentDialog = new ContentDialog()
                 {
-                    Content = new ReplacePage(RstFilePage.RstFileModel),
                     Title = "值(Value)替换",
                     PrimaryButtonText = "替换",
                     CloseButtonText = "取消",
                     DefaultButton = ContentDialogButton.Primary
                 };
-                ContentDialogResult result = await contentDialog.ShowAsync();
+                contentDialog.Content = new ReplacePage(RstFilePage.RstFileModel, contentDialog);
 
-                if (result == ContentDialogResult.Primary)
-                {
-                    int count = 0;
-                    ReplacePage page = contentDialog.Content as ReplacePage;
-                    string originalText = page.OriginalText;
-                    if (!string.IsNullOrEmpty(originalText))
-                    {
-                        string replaceText = page.ReplaceWith;
-                        RstFileModel targetModel = page.RstFileModel;
-                        var items = targetModel.RstFileItems;
-                        //禁用数据更新，提高替换效率。
-                        RstFilePage.UpdateDataSourceWhenModelChanged = false;
-                        for (int i = 0; i < items.Count; i++)
-                        {
-                            string itemValue = items[i].ItemValue;
-                            string itemKey = items[i].ItemKey;
-                            string newItemValue = itemValue.Replace(originalText, replaceText);
-                            if (newItemValue != itemValue)
-                            {
-                                items[i] = new RstFileModel.RstFileItem(itemKey, newItemValue);
-                                count++;
-                            }
-                        }
-                        //启用数据更新，并通过替换最后一项来触发数据更新事件。
-                        RstFilePage.UpdateDataSourceWhenModelChanged = true;
-                        RstFileModel.RstFileItem temp_item = items[items.Count - 1];
-                        items[items.Count - 1] = new RstFileModel.RstFileItem(temp_item.ItemKey, temp_item.ItemValue);
-                    }
-                        contentFrame.Navigate(typeof(RstFilePage), info, new SuppressNavigationTransitionInfo());
-                    ContentDialog completedDialog = new ContentDialog()
-                    {
-                        Content = "共替换了 " + count.ToString() + " 个数据。",
-                        Title = "操作成功完成",
-                        PrimaryButtonText = "返回",
-                        DefaultButton = ContentDialogButton.Primary
-                    };
-                    await completedDialog.ShowAsync();
-                }
+                await contentDialog.ShowAsync();
             }
+        }
+
+        private async void barButton_ShowProperty_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (IsSelectedItemARstFilePage())
+            {
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    Content = new RstFilePropertyPage(RstFilePage.RstFileModel.RstFile),
+                    Title = "RST文件信息",
+                    PrimaryButtonText = "完成",
+                    DefaultButton = ContentDialogButton.Primary
+                };
+                await contentDialog.ShowAsync();
+            }
+        }
+
+        private enum SupportedFileType
+        {
+            JSON = 0,
+            RST = 1
         }
     }
 }

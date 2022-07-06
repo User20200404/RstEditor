@@ -10,7 +10,7 @@
     Loaded="thisControl_Loaded"
     Unloaded="thisControl_Unloaded"
     mc:Ignorable="d">
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="55" />
@@ -64,6 +64,7 @@
             UserGroupMode="Disabled">
             <telerikGrid:RadDataGrid.Columns>
                 <telerikGrid:DataGridTextColumn Header="键(Key)" PropertyName="ItemKey" />
+                <telerikGrid:DataGridTextColumn Header="名称(Name)" PropertyName="ItemName" />
                 <telerikGrid:DataGridTextColumn Header="值(Value)" PropertyName="ItemValue" />
             </telerikGrid:RadDataGrid.Columns>
             <VisualStateManager.VisualStateGroups>

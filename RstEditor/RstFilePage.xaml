@@ -6,10 +6,10 @@
     xmlns:dataGrid="using:RstEditor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    mc:Ignorable="d"
-    NavigationCacheMode="Enabled">
+    NavigationCacheMode="Enabled"
+    mc:Ignorable="d">
 
     <Grid>
-         <dataGrid:FilterableDataGrid x:Name="dataGrid" />
+        <dataGrid:FilterableDataGrid x:Name="dataGrid" />
     </Grid>
 </Page>
